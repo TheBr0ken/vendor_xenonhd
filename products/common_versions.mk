@@ -16,8 +16,23 @@ ro.romstats.name=XenonHD \
 ro.romstats.version=$(shell date +"%m-%d-%y") \
 ro.romstats.tframe=2
 
-#OTA updater app
+
+# OTA
+OTA_TYPE := experimental
+
 PRODUCT_PROPERTY_OVERRIDES += \
-otaupdater.otaid=XenonHD_ROM \
-otaupdater.otaversion=$(shell date +"%Y%m%d") \
-otaupdater.otatime=$(shell date +"%Y%m%d-%H%M") \
+    ro.ota.type=$(OTA_TYPE) \
+    ro.ota.version=$(OTA_TYPE)-XenonHD-$(shell date +"%Y%m%d")
+
+# Create ota_conf, Rudimentary, but it works for now
+$(shell echo -n "" > $(ANDROID_BUILD_TOP)/ota_conf)
+
+$(shell echo -e "ota_url=https://mirrors.c0urier.net/android/teamhorizon/$(OTA_TYPE)/$(TARGET_PRODUCT)/ota_lollipop.xml\n \
+release_type=Stable\n \
+device_name=ro.product.device\n \
+version_source=ro.ota.version\n \
+version_delimiter=-\n \
+version_position=2\n \
+version_format=yyyyMMdd" > $(ANDROID_BUILD_TOP)/ota_conf)
+
+$(shell sed -i "s/\( \|xenonhd_\)//g" $(ANDROID_BUILD_TOP)/ota_conf)
